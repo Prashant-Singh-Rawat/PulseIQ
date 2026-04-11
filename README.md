@@ -151,7 +151,7 @@ Visit the URL shown by Vite (e.g. `http://localhost:5177`)
 }
 ```
 
-### Example Response
+Example Response
 ```json
 {
   "risk_score": 74,
@@ -163,6 +163,12 @@ Visit the URL shown by Vite (e.g. `http://localhost:5177`)
 
 ---
 
-## 📄 License
+📄 License
 Academic Project | For educational and demonstration purposes only.
 Not intended as a real medical diagnostic tool.
+
+
+🤝 Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+Built with ❤️ by Priya Ranjan
