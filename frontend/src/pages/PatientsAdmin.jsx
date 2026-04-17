@@ -11,7 +11,7 @@ const PatientsAdmin = () => {
 
   useEffect(() => {
     const fetchPatients = () => {
-      const accounts = JSON.parse(localStorage.getItem('pulseiq_accounts') || '[]');
+      const accounts = JSON.parse(localStorage.getItem('priocardix_accounts') || '[]');
       const patientAccounts = accounts.filter(acc => acc.role === 'patient');
       setPatients(patientAccounts);
     };

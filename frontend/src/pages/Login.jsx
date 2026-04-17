@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, Lock, User, ArrowRight } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 import useAuthStore from '../store/authStore';
+import Logo from '../components/Logo';
+import { ENTERPRISE_CONFIG } from '../config/enterpriseKeys';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,6 +17,24 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleGoogleSuccess = (credentialResponse) => {
+    const decoded = jwtDecode(credentialResponse.credential);
+    console.log("Google Auth Success:", decoded);
+    
+    const userData = {
+      name: decoded.name,
+      email: decoded.email,
+      avatar: decoded.picture,
+      role: 'patient', // Default for Google Login
+      loginCount: 1,
+      lastLoginTime: new Date().toISOString(),
+      authSource: 'Google'
+    };
+    
+    loginSuccess(userData);
+    navigate('/');
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -29,7 +51,7 @@ const Login = () => {
       }
 
       // Check registered accounts
-      const accounts = JSON.parse(localStorage.getItem('pulseiq_accounts') || '[]');
+      const accounts = JSON.parse(localStorage.getItem('priocardix_accounts') || '[]');
       
       const userIndex = accounts.findIndex(u => 
         u.role === activeTab && 
@@ -46,7 +68,7 @@ const Login = () => {
         
         // Update storage
         accounts[userIndex] = user;
-        localStorage.setItem('pulseiq_accounts', JSON.stringify(accounts));
+        localStorage.setItem('priocardix_accounts', JSON.stringify(accounts));
 
         setLoading(false);
         loginSuccess(user);
@@ -66,15 +88,12 @@ const Login = () => {
 
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel p-10 max-w-md w-full relative z-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10">
         
-        <div className="flex justify-center mb-6">
-           <div className="w-16 h-16 bg-pulse-gradient rounded-2xl flex items-center justify-center animate-heartbeat shadow-neon-red">
-             <Activity className="text-white" size={36} />
-           </div>
+        <div className="flex justify-center flex-col items-center mb-4">
+           <Logo size="text-4xl" iconSize={48} />
+           <p className="text-center text-healthCyan font-bold text-sm mt-2 uppercase tracking-widest">Preventive Cardiology Platform</p>
+           <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">powered by PulseIQ Guardian Engine</p>
         </div>
         
-        <h2 className="text-3xl font-heading font-bold text-center mb-2">PulseIQ Access</h2>
-        <p className="text-center text-gray-400 mb-6">Authenticate your credentials.</p>
-
         {/* Tabs for Role Selection */}
         <div className="flex bg-[#151b2e] rounded-xl p-1 mb-6">
             <button 
@@ -135,6 +154,23 @@ const Login = () => {
           >
              {loading ? <Activity className="animate-spin" /> : <>Authenticate <ArrowRight size={18} className="ml-2" /></>}
           </button>
+
+          <div className="relative my-8">
+             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+             <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest leading-none bg-darkBg px-4 text-gray-500">Secure Bridge</div>
+          </div>
+
+          <div className="flex justify-center">
+             <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError("Google Authentication Failed")}
+                theme="filled_black"
+                shape="pill"
+                size="large"
+                text="continue_with"
+                width="100%"
+             />
+          </div>
         </form>
 
         <p className="mt-8 text-center text-gray-500 text-xs">

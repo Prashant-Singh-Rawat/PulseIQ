@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, Phone, Lock, User, ArrowRight, ShieldPlus } from 'lucide-react';
+import { Activity, Phone, Lock, User, ArrowRight, ShieldPlus, CheckCircle2, MessageSquare } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+import Logo from '../components/Logo';
+import { sendWhatsAppOTP } from '../services/apiService';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -18,6 +20,10 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [step, setStep] = useState('form'); // 'form' or 'otp'
+  const [otpInput, setOtpInput] = useState('');
+  const [generatedOtp, setGeneratedOtp] = useState('');
+  const [otpLoading, setOtpLoading] = useState(false);
 
   const generateUniqueId = (role) => {
     const prefix = role === 'doctor' ? 'DOC' : 'PAT';
@@ -25,25 +31,56 @@ const Signup = () => {
     return `${prefix}-${num}`;
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    setTimeout(() => {
-      if (formData.password !== formData.confirmPassword) {
-        setError("Passwords do not match!");
-        setLoading(false);
-        return;
-      }
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      setLoading(false);
+      return;
+    }
 
-      if (formData.mobileNumber.length !== 10) {
-        setError("Please enter a valid 10-digit mobile number!");
-        setLoading(false);
-        return;
-      }
+    if (formData.mobileNumber.length !== 10) {
+      setError("Please enter a valid 10-digit mobile number!");
+      setLoading(false);
+      return;
+    }
 
-      const existingUsers = JSON.parse(localStorage.getItem('pulseiq_accounts') || '[]');
+    const existingUsers = JSON.parse(localStorage.getItem('priocardix_accounts') || '[]');
+    if (existingUsers.find(u => u.mobileNumber === formData.mobileNumber)) {
+      setError("Mobile number already registered!");
+      setLoading(false);
+      return;
+    }
+
+    // Step 1: Generate and Send OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(otp);
+
+    try {
+      setOtpLoading(true);
+      await sendWhatsAppOTP(`+91${formData.mobileNumber}`, otp);
+      setStep('otp');
+      setLoading(false);
+      setOtpLoading(false);
+    } catch (err) {
+      console.error("OTP Error:", err);
+      setError(`OTP FAILED: ${err.message || "Please check your WhatsApp token and number."}`);
+      setLoading(false);
+      setOtpLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (otpInput === generatedOtp || otpInput === "123456") { // Allow 123456 as backup or for testing
+      const existingUsers = JSON.parse(localStorage.getItem('priocardix_accounts') || '[]');
+      
+      // Pre-check for mobile again to prevent race conditions
       if (existingUsers.find(u => u.mobileNumber === formData.mobileNumber)) {
         setError("Mobile number already registered!");
         setLoading(false);
@@ -67,14 +104,17 @@ const Signup = () => {
         newUser.gender = formData.gender;
       }
 
-      localStorage.setItem('pulseiq_accounts', JSON.stringify([...existingUsers, newUser]));
+      localStorage.setItem('priocardix_accounts', JSON.stringify([...existingUsers, newUser]));
       setLoading(false);
-      setSuccessMsg(`Registration Successful! Your Unique ID is: ${uniqueId}. Please save it for login. Redirecting...`);
+      setSuccessMsg(`Registration Successful! Your Unique ID is: ${uniqueId}. Redirecting...`);
       
       setTimeout(() => {
          navigate('/login');
-      }, 5000);
-    }, 1500);
+      }, 3000);
+    } else {
+      setError("Invalid OTP code. Please check your WhatsApp.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -83,14 +123,12 @@ const Signup = () => {
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-healthCyan/20 rounded-full blur-[150px] pointer-events-none" />
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-panel p-10 max-w-md w-full relative z-10 shadow-2xl border border-white/10">
-        <div className="flex justify-center mb-6">
-           <div className="w-16 h-16 bg-pulse-gradient rounded-2xl flex items-center justify-center animate-heartbeat shadow-neon-red">
-             <Activity className="text-white" size={36} />
-           </div>
+        <div className="flex justify-center flex-col items-center mb-6">
+           <Logo size="text-3xl" iconSize={36} />
+           <p className="text-center text-healthCyan font-bold text-sm mt-4 uppercase tracking-widest">PulseIQ Guardian Engine Access</p>
         </div>
         
-        <h2 className="text-3xl font-heading font-bold text-center mb-2">Create Account</h2>
-        <p className="text-center text-gray-400 mb-6">Join the PulseIQ platform.</p>
+        <p className="text-center text-gray-400 mb-6">Join the Priocardix AI platform.</p>
 
         {/* Tabs */}
         <div className="flex bg-[#151b2e] rounded-xl p-1 mb-6">
@@ -123,7 +161,41 @@ const Signup = () => {
           </div>
         )}
 
-        {!successMsg && (
+        {step === 'otp' && !successMsg && (
+          <form onSubmit={handleVerifyOtp} className="space-y-6">
+            <div className="text-center mb-6">
+               <div className="w-16 h-16 bg-healthCyan/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-healthCyan animate-pulse">
+                  <MessageSquare size={32} />
+               </div>
+               <h3 className="text-lg font-black text-white uppercase tracking-tight">Verify WhatsApp OTP</h3>
+               <p className="text-xs text-gray-500 mt-2">A 6-digit code has been sent to <br/> <span className="text-white font-bold">+91 {formData.mobileNumber}</span></p>
+            </div>
+
+            <div>
+              <label className="text-[10px] uppercase font-black tracking-widest text-gray-500 mb-2 block text-center">Enter Code</label>
+              <input 
+                type="text" required maxLength="6"
+                value={otpInput} onChange={e => setOtpInput(e.target.value.replace(/\D/g, ''))} 
+                className="w-full bg-[#151b2e] border border-white/10 p-5 rounded-2xl focus:ring-2 focus:ring-healthCyan transition-all outline-none text-2xl font-black tracking-[0.5em] text-center text-healthCyan" 
+                placeholder="••••••" 
+              />
+            </div>
+
+            <button type="submit" disabled={loading} className="w-full py-5 bg-healthCyan text-black font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:brightness-110 active:scale-95 transition-all flex justify-center items-center">
+               {loading ? <Activity className="animate-spin" /> : <>Verify & Complete <CheckCircle2 size={18} className="ml-2" /></>}
+            </button>
+
+            <button 
+              type="button"
+              onClick={() => setStep('form')}
+              className="w-full text-[10px] font-black text-gray-500 uppercase tracking-widest hover:text-white transition-colors"
+            >
+              Back to registration
+            </button>
+          </form>
+        )}
+
+        {step === 'form' && !successMsg && (
           <form onSubmit={handleSignup} className="space-y-4">
             <div>
               <label className="text-[10px] uppercase font-black tracking-widest text-gray-500 mb-1 block ml-1">Full Name</label>
@@ -206,7 +278,7 @@ const Signup = () => {
             </div>
             
             <button type="submit" disabled={loading} className={`w-full py-4 mt-2 font-black uppercase tracking-[0.2em] rounded-xl shadow-[0_0_20px_rgba(255,51,102,0.3)] hover:brightness-110 active:scale-95 transition-all flex justify-center items-center ${activeTab === 'doctor' ? 'bg-pulseRed text-black' : 'bg-healthCyan text-black'}`}>
-               {loading ? <Activity className="animate-spin" /> : <>Register <ArrowRight size={18} className="ml-2" /></>}
+               {loading ? <Activity className="animate-spin" /> : <>Send OTP <ArrowRight size={18} className="ml-2" /></>}
             </button>
           </form>
         )}

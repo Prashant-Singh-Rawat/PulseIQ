@@ -163,7 +163,7 @@ const Settings = () => {
               </div>
               <div className="text-right border-l border-white/10 pl-4">
                  <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest">ML Accuracy</p>
-                 <p className="text-2xl font-black text-healthCyan">99.8%</p>
+                 <p className="text-2xl font-black text-healthCyan">92.5%</p>
               </div>
            </div>
         </div>

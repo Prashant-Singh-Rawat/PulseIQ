@@ -11,7 +11,7 @@ import xgboost as xgb
 warnings.filterwarnings('ignore')
 
 print("\n=======================================================")
-print("[PulseIQ AI Engine] MASTER CLINICAL FUSION PIPELINE")
+print("[Priocardix AI Engine] MASTER CLINICAL FUSION PIPELINE")
 print("=======================================================\n")
 
 def load_and_standardize():

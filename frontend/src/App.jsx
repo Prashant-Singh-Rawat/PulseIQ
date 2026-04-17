@@ -9,6 +9,8 @@ import Settings from './pages/Settings'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import PatientsAdmin from './pages/PatientsAdmin'
+import AnalyticsHub from './pages/AnalyticsHub'
+import EnterpriseHub from './pages/EnterpriseHub'
 import useAuthStore from './store/authStore'
 
 const ProtectedRoute = ({ children }) => {
@@ -31,6 +33,8 @@ function App() {
           <Route path="reports" element={<Reports />} />
           <Route path="settings" element={<Settings />} />
           <Route path="patients" element={<PatientsAdmin />} />
+          <Route path="analytics" element={<AnalyticsHub />} />
+          <Route path="enterprise" element={<EnterpriseHub />} />
         </Route>
         
         <Route path="*" element={<Navigate to="/" replace />} />

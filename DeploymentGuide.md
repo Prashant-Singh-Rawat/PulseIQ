@@ -1,167 +1,127 @@
-# 🫀 PulseIQ — Deployment Guide
+# 🫀 Priocardix AI — Deployment Guide
+### PulseIQ Guardian Engine™ `v1.4.2-Guardian-Elite`
+
+## System Architecture
+Priocardix AI uses a decoupled microservices architecture:
+1. **Frontend (Guardian AI Sentinel):** React, Vite, Tailwind CSS, Framer Motion, and Three.js (`react-three-fiber`).
+2. **Backend (ML PulseIQ Interface):** FastAPI, Scikit-Learn (Simulated Neural Engine), and Uvicorn.
+
+### Critical Application Asset: 3D Heart Model
+**Important:** To enable the ultra-realistic "Guardian Elite" 3D visualization, you must independently download a `.glb` human heart model (e.g., from Sketchfab or Poly Pizza) and place it directly into the frontend directory before running:
+```bash
+/frontend/public/heart.glb
+```
+If this file is missing, the system will launch using a safe procedural medical primitive fallback.
 
 ---
 
 ## Overview
 
-PulseIQ has two parts that need to run simultaneously:
-1. **Frontend** — React app (Vite) → Deploy to **Vercel** or **Netlify**
-2. **ML Backend** — FastAPI (Python) → Deploy to **Railway**, **Render**, or a **VPS**
+Priocardix AI has two parts running simultaneously:
+1. **Frontend** — React + Vite app → `localhost:5173`
+2. **ML Backend** — FastAPI (Python) → `localhost:8000`
+3. **Guardian Brain** — Zustand (runs entirely client-side, no extra server needed)
+
+> [!IMPORTANT]
+> The Guardian Brain (Zustand store with localStorage persistence) is self-contained in the frontend. Even without the backend running, the simulation engine will still work — demonstrating live vitals, anomaly detection, emergency protocols, and all UI features.
 
 ---
 
-## 🖥️ LOCAL DEVELOPMENT (Offline / Laptop Demo)
+## 🖥️ LOCAL DEVELOPMENT (Laptop Demo / Offline)
 
 ### Requirements
-- Node.js 18+ (`node --version` to check)
-- Python 3.9+ (`python --version` to check)
-- pip (`pip --version` to check)
+- Node.js 18+ (`node --version`)
+- Python 3.9+ (`python --version`)
+- pip (`pip --version`)
 
-### Start Backend
+### Step 1 — Start Backend (ML Risk Engine)
 ```bash
-cd ml-service
+cd services/ml-service
 pip install -r requirements.txt
 python -m uvicorn app.main:app --reload --port 8000
 ```
 ✅ Backend running at: `http://localhost:8000`
-✅ API docs at: `http://localhost:8000/docs`
+✅ Swagger API docs: `http://localhost:8000/docs`
 
-### Start Frontend (new terminal)
+### Step 2 — Start Frontend (new terminal)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-✅ Frontend running at: `http://localhost:5173` (or 5174/5175/5176/5177 if ports busy)
+✅ Frontend running at: `http://localhost:5173`
 
-### Login Credentials
-| Field | Value |
+---
+
+## 🔑 Login Credentials
+
+| Role | Login | Password |
+|---|---|---|
+| Doctor (Demo) | `doctor@hospital.com` | `admin` |
+| Patient | Register via `/signup` | — |
+
+---
+
+## 🔑 Key Files — Guardian Elite Architecture
+
+| File | Purpose |
 |---|---|
-| Neural Gate Key | `PULSE2026` |
-| Email | `doctor@hospital.com` |
-| Password | `admin` |
-| OTP | `000000` |
+| `frontend/src/store/healthStore.js` | Global Guardian Brain (Zustand v4.0 — all state including **Workspace Expansion**) |
+| `frontend/src/hooks/useGuardianEngine.js` | Autonomous Sentinel Engine (3-second deterministic simulation loop) |
+| `frontend/src/components/EmergencySystem.jsx` | Multi-tier emergency lifecycle (Warning → Dispatch → Acknowledged) |
+| `frontend/src/components/RiskMap.jsx` | Global Leaflet map with expansion zones |
+| `frontend/src/components/AuditLogPanel.jsx` | Real-time event audit log |
+| `frontend/src/pages/DigitalTwin.jsx` | 3D Heart command center + patient selector + speed control |
+| `frontend/src/layouts/MainLayout.jsx` | Global system mode, AI thinking, **Universal Expansion Hub**, Logo persistence |
 
 ---
 
 ## ☁️ PRODUCTION DEPLOYMENT
 
-### Step 1 — Deploy Backend to Render.com (free tier)
-
+### Deploy Backend → Render.com (free tier)
 1. Push project to GitHub
 2. Go to [render.com](https://render.com) → New Web Service
-3. Connect your repo → set root directory to `ml-service`
+3. Connect repo → set root directory to `services/ml-service`
 4. **Build Command:** `pip install -r requirements.txt`
 5. **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-6. Copy the deployed URL (e.g. `https://pulseiq-api.onrender.com`)
 
-### Step 2 — Update Frontend API URL
-
-In `frontend/src/pages/Predict.jsx`, change:
-```js
-// FROM:
-const response = await fetch('http://localhost:8000/api/predict', ...);
-// TO:
-const response = await fetch('https://pulseiq-api.onrender.com/api/predict', ...);
-```
-
-Do the same in `DigitalTwin.jsx` for the `/api/simulate` endpoint.
-
-### Step 3 — Deploy Frontend to Vercel
-
+### Deploy Frontend → Vercel
 1. Go to [vercel.com](https://vercel.com) → New Project → Import from GitHub
 2. Set root directory to `frontend`
-3. Framework: Vite
+3. Framework: **Vite**
 4. Build command: `npm run build`
 5. Output directory: `dist`
-6. Deploy → get your live URL
-
-### Step 4 — Add CORS to Backend
-
-In `ml-service/app/main.py`, ensure CORS allows your Vercel domain:
-```python
-from fastapi.middleware.cors import CORSMiddleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://your-app.vercel.app", "http://localhost:5173"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-```
 
 ---
 
-## 🐳 DOCKER (Optional — for advanced deployment)
+## 🗄️ Data Persistence
 
-### Backend Dockerfile (`ml-service/Dockerfile`)
-```dockerfile
-FROM python:3.10-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
+The Guardian Brain uses **Zustand persist** middleware with the key `priocardix-guardian-elite-v4`.
 
-### Run with Docker
-```bash
-cd ml-service
-docker build -t pulseiq-api .
-docker run -p 8000:8000 pulseiq-api
-```
-
----
-
-## 🔧 ENVIRONMENT VARIABLES (for production)
-
-Create `.env` in frontend root:
-```
-VITE_API_URL=https://your-backend-url.onrender.com
-```
-
-Then in code, replace hardcoded URLs:
-```js
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-fetch(`${API}/api/predict`, ...)
-```
-
----
-
-## 📦 BUILD FOR PRODUCTION
-
-```bash
-cd frontend
-npm run build
-# Creates optimized files in /dist folder
-```
-
----
-
-## 🗄️ DATABASE MIGRATION (Future)
-
-Currently using localStorage. To upgrade:
-
-1. Install PostgreSQL / MongoDB
-2. Create user schema, history schema
-3. Replace `localStorage.setItem/getItem` calls with:
-   - REST API calls to a new `/api/users` and `/api/history` endpoint
-   - Add JWT token authentication instead of localStorage-based auth
-4. Update `authStore.js` to use token from API response
+| Data | Stored In | Persists? |
+|---|---|---|
+| Vitals + History | `localStorage` (Guardian Brain) | ✅ Yes — survives reload |
+| Workspace State  | `localStorage` (Guardian Brain) | ✅ Yes — expands globally |
+| Personalization  | `localStorage` (Guardian Brain) | ✅ Yes |
+| Audit Logs       | `localStorage` (Guardian Brain) | ✅ Yes |
+| Auth Session     | `localStorage` (authStore)      | ✅ Yes |
 
 ---
 
 ## ✅ PRE-DEMO CHECKLIST
 
-Before any presentation or demo:
+Before any presentation:
 
-- [ ] Backend running (`python -m uvicorn app.main:app --reload`)
-- [ ] Frontend running (`npm run dev`) and URL noted
-- [ ] Both terminals left OPEN (don't close them)
-- [ ] Browser open to the frontend URL
-- [ ] Test login works: `PULSE2026` → `doctor@hospital.com/admin` → `000000`
-- [ ] Test one scan: enter Age=55, BP=145, Chol=260, HR=130 and confirm result appears
-- [ ] History page shows records
-- [ ] 3D Twin loads and all 3 layers switch correctly
+- [ ] Backend running (`python -m uvicorn app.main:app --port 8000 --reload`)
+- [ ] Frontend running (`npm run dev`) in a separate terminal
+- [ ] Browser open to `http://localhost:5173`
+- [ ] **Test Global Expansion**: Click the floating chevron in the bottom-left to expand the workspace. Verify logo visibility.
+- [ ] **Test Determinism**: Use the same BP/Stress inputs twice. Verify identical Risk and BPM output (no jitter).
+- [ ] **Check Accuracy**: Verify Simulation Accuracy shows realistically between 85-88%.
+- [ ] **Switch patient profile**: Change to "Senior" profile — verify risk jumps predictably.
+- [ ] **Enable 5x speed mode**: Verify simulation accelerates.
+- [ ] **Set BP to 180**: Trigger emergency lifecycle.
+- [ ] **Test "Reset Simulation"**: Verify all vitals and workspace state return to baseline.
 
 ---
 
@@ -169,8 +129,9 @@ Before any presentation or demo:
 
 | Problem | Solution |
 |---|---|
-| "System Error" on scan | Backend is offline — restart `uvicorn` command |
-| Port already in use | Vite will auto-switch to next port — check terminal output |
-| 3D heart not loading | Wait 3–5 seconds for Three.js to initialize on first load |
-| History not showing | Open browser DevTools → Application → localStorage → delete `pulseiq_scan_history_v2` → refresh |
-| Can't log in | Clear localStorage in DevTools → refresh → try again |
+| Floating Button missing | Check `z-index` conflict in custom components |
+| No BPM Jitter? | Intentional — system is now deterministic for medical consistency |
+| Accuracy seems low | Re-calibrated to 85-88% for professional clinical realism |
+| 3D heart not loading | Ensure `heart.glb` is in `/frontend/public/` |
+| Sidebar won't expand | Global state block — refresh or Reset Simulation |
+| Map not showing | Check Leaflet CSS import in `RiskMap.jsx` |

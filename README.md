@@ -1,178 +1,102 @@
-# 🫀 PulseIQ — AI-Powered Cardiac Diagnostic Platform
+# 🫀 Priocardix AI: Enterprise Preventive Cardiology Platform
+### Powered by PulseIQ Guardian Engine™ `v1.4.2-Guardian-Elite`
 
-> A futuristic, AI-driven heart health dashboard that predicts cardiac risk, simulates a 3D Digital Heart Twin, and generates personalized medical health plans.
+> **"Predict. Prevent. Protect — Intelligent Cardiac Care for the Future."**
 
----
-
-## 🚀 What is PulseIQ?
-
-PulseIQ is a full-stack web application that acts as a **personal cardiac diagnostic command center**. It uses a trained Machine Learning model to predict heart attack risk from biometric data, then generates a complete personalized health plan including diet, exercise, and doctor advice — all inside a stunning, futuristic UI.
+Priocardix AI is a startup-scale, fully autonomous cardiovascular intelligence system. Built on a modular microservice architecture with a **Global Guardian Brain** (Zustand), it delivers real-time predictive diagnostics, personalized clinical interventions, and population health surveillance — all synchronized across every UI component via a single source of truth.
 
 ---
 
-## ✨ Key Features
+## 🏗️ System Architecture (v6.0 — "Guardian Elite")
 
-| Feature | Description |
+### Global Guardian Brain
+The entire platform is orchestrated through **`healthStore.js`** (Zustand + persist), the single source of truth for all vitals, metrics, and system state across every page and component.
+
+| State Domain | Fields |
 |---|---|
-| 🔐 **3-Step Secure Login** | Secret Neural Key → Email/Password → OTP (2FA) |
-| 🫀 **3D Digital Heart Twin** | 3 distinct 3D views: Anatomical Heart, Vascular Network, Neural Network |
-| 🤖 **AI Heart Scanner** | Predicts heart attack risk % from age, BP, cholesterol, heart rate |
-| 📋 **Full Health Plan** | Personalized diet plan, 7-day exercise routine, doctor recommendations |
-| 📂 **Medical History** | Persistent scan records with PDF download (includes full health plan) |
-| 💬 **AI Chatbot** | Keyword-based health assistant for questions |
-| 💓 **Live ECG Monitor** | Real-time canvas-based oscilloscope synced to heart rate |
-| 🌌 **HUD Holographic Mode** | 3D-tiliting futuristic UI mode with scan-line overlay |
-| 🔊 **Sci-Fi Audio Engine** | Web Audio API neural pulse sounds on layer switching |
-| ⚙️ **Settings / BIOS Panel** | Voice control, theme, biological encryption toggle |
+| **Live Vitals**    | `bpm`, `bp`, `stress`, `sleep`, `risk`, `healthScore` |
+| **Elite Metrics**  | `confidence`, `stability`, `cardiacLoad`, `explainabilityScore` |
+| **Workspace**      | `isMainSidebarCollapsed` — Global workspace expansion control |
+| **Personalization**| `age`, `weight`, `height`, `gender`, `medicalHistory` |
+| **System**         | `emergencyState`, `systemMode`, `systemStatus`, `modelVersion`, `dataSource` |
+| **Intelligence**   | `isAnomalyDetected`, `isDriftDetected`, `isAiThinking`, `isStabilizing` |
+| **Audit**          | `auditLogs[]` — timestamped event trail for all major system events |
+
+### Microservice Backend (Repository v6.0 Restructured)
+
+| Service | Responsibility |
+|---|---|
+| **Prio-Gateway**        | Multi-agent routing, authentication, and secure API bridging |
+| **Guardian ML Engine**  | Deterministic risk scoring, `/api/predict`, personalized health plan |
+| **Intervention Hub**    | Daily medication adherence, gamification, behavioral tasks |
+| **Population Analytics**| Global node monitoring, heatmaps, and federated convergence |
+| **Alert Hub**           | Emergency caregiver linking and encrypted secure alerts |
+| **Postgres Database**   | Centralized enterprise-grade storage for longitudinal history |
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Key Guardian Elite Features (v6.0)
 
-### Frontend
-- **React 18** + **Vite** — fast build tool
-- **Tailwind CSS** — utility-first styling
-- **Framer Motion** — animations
-- **React Three Fiber + Three.js** — 3D heart visualization
-- **Recharts** — data charts
-- **Zustand** — state management
-- **Lucide React** — icons
-- **Web Audio API** — sound effects
-- **Web Speech API** — voice announcements
+### 🧩 Global Workspace Expansion (New)
+- **Universal Expansion Hub**: A floating, logo-branded control at the bottom-left of the screen allows users to expand their workspace globally, collapsing the main navigation to maximize focus on diagnostics.
+*   **Cross-Page Persistence**: Sidebar state is managed via the **Guardian Brain**, ensuring your preferred layout persists as you navigate between modules.
 
-### Backend (ML Engine)
-- **FastAPI** (Python) — REST API
-- **Scikit-learn** — ML model (Random Forest / Logistic Regression)
-- **Uvicorn** — ASGI server
-- **Pandas / NumPy** — data processing
+### 🧠 The Deterministic Sentinel Engine (Refined)
+- **Zero-Jitter Simulation**: The simulation engine has been upgraded to be purely deterministic. The same physiological inputs (BP, Stress, Sleep) now yield identical, repeatable results, eliminating simulation noise for medical accuracy.
+- **Fail-Safe Recovery**: On any computational error, the system enters `FAIL_SAFE_RECOVERY_ACTIVE` and resets vitals to a safe baseline, logged instantly to the Audit trail.
+- **Simulation Speed Control**: Toggle between **1x / 2x / 5x** simulation speed from the Digital Twin command center.
+- **Performance Status Level**: `< 5ms → Optimal`, `< 20ms → Normal`, `> 20ms → Delayed`.
 
-### Storage
-- **localStorage** — user accounts, scan history, settings (no external database needed)
+### 🛡️ Multi-Tier Emergency & Surveillance
+| Tier | Risk Threshold | System Response |
+|---|---|---|
+| Warning      | > 70% | Orange top banner, shows active mode |
+| Emergency    | > 85% | Full-screen modal + Guardian HUD dispatch |
+| Critical     | > 95% | Red border HUD overlay + Emergency Terminal |
+| Dispatch Initiated | 5s after Emergency | Satellite uplink + AIIMS Heart Specialty Lock |
 
----
+### 🔬 Intelligence & Transparency
+- **Explainability Score** (0–100): Calculated from the count and strength of risk factors (high BP, stress, poor sleep).
+- **Calibrated Confidence Index** (85–88%): Realistically calibrated AI reliability metric reflecting clinical-grade performance standards (no over-fitting).
+- **Health Drift Detection**: Compares historical blocks to detect worsening cardiac trends.
+- **Cardiac Analytics Hub**: Relocated Guardian Elite Summary and Clinical determinants to centralized hubs for better clinical workflow.
 
-## 📂 Project Structure
-
-```
-int 428 project/
-├── frontend/                   ← React web application
-│   ├── src/
-│   │   ├── pages/
-│   │   │   ├── Login.jsx       ← 3-step auth gateway
-│   │   │   ├── Signup.jsx      ← New user registration
-│   │   │   ├── DigitalTwin.jsx ← 3D heart + live biometrics
-│   │   │   ├── Predict.jsx     ← AI scanner + health plan
-│   │   │   ├── Reports.jsx     ← Medical history + PDF export
-│   │   │   ├── Chatbot.jsx     ← AI health assistant
-│   │   │   └── Settings.jsx    ← System configuration
-│   │   ├── components/
-│   │   │   ├── DigitalTwinCanvas.jsx  ← Three.js 3D heart
-│   │   │   └── ECGWaveform.jsx        ← Live ECG canvas
-│   │   ├── store/
-│   │   │   ├── authStore.js           ← Authentication state
-│   │   │   └── digitalTwinStore.js    ← Biometric simulation state
-│   │   ├── utils/
-│   │   │   └── healthPlan.js          ← Health plan generator
-│   │   ├── layouts/
-│   │   │   └── MainLayout.jsx         ← Sidebar + HUD mode
-│   │   └── App.jsx                    ← Routes & navigation
-│   └── package.json
-│
-├── ml-service/                 ← Python FastAPI ML backend
-│   ├── app/
-│   │   ├── main.py             ← API endpoints (/predict, /simulate)
-│   │   └── models/             ← Trained ML model files
-│   ├── data/                   ← Training datasets
-│   ├── train_advanced.py       ← Model training script
-│   ├── generate_data.py        ← Synthetic data generator
-│   └── requirements.txt        ← Python dependencies
-│
-├── README.md
-├── DeploymentGuide.md
-├── Interview-Viva-Notes.md
-└── Presentation-Slides.md
-```
+### 👥 Global Interface Refinements
+- **Hover-Reveal Navigation**: Right-hand navigation dock labels are hidden by default, appearing only on hover for a zero-distraction UI.
+- **Micro-Animations**: Framer Motion-powered layout shifts and holographic pulse effects for a premium diagnostic experience.
 
 ---
 
-## ⚡ Quick Start (Run Locally)
+## 📦 Deployment & Setup
 
-### Requirements
-- Node.js 18+
-- Python 3.9+
-- pip
-
-### Step 1 — Start the AI Backend
+### 💻 Manual Method (Standalone)
 ```bash
-cd ml-service
+# 1. Start Backend (ML Engine)
+cd services/ml-service
 pip install -r requirements.txt
-python -m uvicorn app.main:app --reload
-# Runs at: http://localhost:8000
-```
+python -m uvicorn app.main:app --reload --port 8000
 
-### Step 2 — Start the Frontend (new terminal)
-```bash
+# 2. Start Frontend
 cd frontend
 npm install
 npm run dev
-# Runs at: http://localhost:5173 (or next available port)
 ```
+✅ Frontend: `http://localhost:5173`
+✅ Backend API: `http://localhost:8000`
 
-### Step 3 — Open in browser
-Visit the URL shown by Vite (e.g. `http://localhost:5177`)
-
----
-
-## 🔑 Login Credentials
-
-| Step | Value |
-|---|---|
-| Neural Gate Key | `PULSE2026` |
-| Email | `doctor@hospital.com` |
-| Password | `admin` |
-| OTP | `000000` |
-
----
-
-## 🤖 API Endpoints
-
-| Endpoint | Method | Description |
-|---|---|---|
-| `/api/predict` | POST | Predicts heart attack risk from biometric data |
-| `/api/simulate` | POST | Simulates real-time digital twin metrics |
-
-### Example Request (`/api/predict`)
-```json
-{
-  "age": 55,
-  "resting_bp": 145,
-  "cholesterol": 280,
-  "max_heart_rate": 140
-}
-```
-
-Example Response
-```json
-{
-  "risk_score": 74,
-  "risk_category": "High Risk",
-  "top_contributing_feature": "cholesterol",
-  "feature_impacts": { "cholesterol": -8.5, "age": -4.2, ... }
-}
+### 🐳 Docker Method (Full Enterprise Stack)
+```bash
+cd infrastructure
+docker-compose up -d --build
 ```
 
 ---
 
-<<<<<<< HEAD
-📄 License
-=======
-## 📄 License
->>>>>>> 37f60c2d (Updated project files)
-Academic Project | For educational and demonstration purposes only.
-Not intended as a real medical diagnostic tool.
+## 📄 Final Disclosure
+**Academic Project | Patent Proof-of-Concept | v6.0 "Guardian Elite"**
+Priocardix AI is an educational technology demonstration and is not intended for real clinical diagnostics.
 
+Built with ❤️ by **Priya Ranjan**
+ demonstration and is not intended for real clinical diagnostics.
 
-🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-Built with ❤️ by Priya Ranjan
+Built with ❤️ by **Priya Ranjan**

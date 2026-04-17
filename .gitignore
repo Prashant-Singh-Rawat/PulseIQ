@@ -1,1 +1,17 @@
 node_modules/
+.env
+__pycache__/
+*.pyc
+.DS_Store
+dist/
+build/
+.venv/
+env/
+venv/
+*.pkl
+frontend/dist/
+frontend/node_modules/
+backend/__pycache__/
+services/**/__pycache__/
+services/**/*.pyc
+infrastructure/pgdata/

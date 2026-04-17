@@ -11,7 +11,7 @@ const DEFAULT_HISTORY = [
   { id: 'SC-7920', date: 'Nov 20, 2025', risk: 12, status: 'Normal',    source: 'General Checkup' },
 ];
 
-const STORAGE_KEY = 'pulseiq_scan_history_v2';
+const STORAGE_KEY = 'priocardix_scan_history_v2';
 
 const getRiskColor = (risk) => {
   if (risk > 70) return '#ff3366';
@@ -116,7 +116,7 @@ const Reports = () => {
       </style></head><body>
 
       <div class="header">
-        <div class="logo">Pulse<span>IQ</span> Health Report</div>
+        <div class="logo">Priocardix<span>AI</span> Health Report</div>
         <div class="badge">${scan.status}</div>
       </div>
 
@@ -155,7 +155,7 @@ const Reports = () => {
       <p style="margin-top:8px;font-size:11px;color:#dc2626">If you experience any of these signs — call 112 or go to ER immediately.</p>` : ''}
 
       <div class="footer">
-        PulseIQ AI Health System &bull; This report is for informational purposes only &bull; Always consult a qualified physician for medical decisions &bull; Generated: ${new Date().toLocaleString()}
+        Priocardix AI Health System &bull; This report is for informational purposes only &bull; Always consult a qualified physician for medical decisions &bull; Generated: ${new Date().toLocaleString()}
       </div>
       </body></html>
     `);

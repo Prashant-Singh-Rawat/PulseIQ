@@ -14,13 +14,13 @@ const QA_DATABASE = [
   { keywords: ['smoke', 'smoking', 'vape', 'tobacco', 'nicotine'], response: "Smoking is very bad for your heart and arteries. If you stop smoking now, your heart health will improve very quickly." },
   { keywords: ['sugar', 'diabetes', 'glucose', 'insulin'], response: "Too much sugar is bad for your heart. Try to avoid sugary drinks and soda. Drink plain water instead to keep your heart healthy." },
   { keywords: ['age', 'old', 'youth', 'aging'], response: "Age is just a number! You can make your heart feel younger by eating well, sleeping enough, and walking every day." },
-  { keywords: ['hello', 'hi', 'hey', 'start'], response: "Hello! I am PulseAI. I can help you understand your heart health and how to stay healthy. What would you like to know?" }
+  { keywords: ['hello', 'hi', 'hey', 'start'], response: "Hello! I am Priocardix AI. I can help you understand your heart health and how to stay healthy. What would you like to know?" }
 ];
 
 const SUGGESTIONS = [ "How to lower my Blood Pressure?", "Good food for heart?", "How to sleep better?", "Is salt bad for me?" ];
 
 const Chatbot = () => {
-  const [messages, setMessages] = useState([{ role: 'ai', text: 'Hello! I am your PulseAI Assistant. How can I help you today?' }]);
+  const [messages, setMessages] = useState([{ role: 'ai', text: 'Hello! I am your Priocardix AI Assistant. How can I help you today?' }]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef(null);
